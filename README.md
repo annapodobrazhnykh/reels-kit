@@ -1,50 +1,70 @@
-# reels-kit — рилсы с Claude Code или Codex
+# reels-kit: short videos with Claude Code or Codex
 
-Набор скиллов, с которыми ИИ-агент сам монтирует рилсы «говорящая голова» из видео с iPhone (паузы, «ээ», субтитры, зумы, вставки, звуки, музыка), делает обложки, придумывает идеи по трендам и публикует посты в Instagram, YouTube Shorts и X.
+A set of skills for an AI agent. With them, the agent edits talking-head reels from iPhone footage by itself: it cuts pauses and filler words, adds subtitles, zooms, b-roll, sound effects and music. It also makes covers, suggests ideas based on current trends, and publishes to Instagram, YouTube Shorts and X.
 
-| Скилл | Что делает |
+| Skill | What it does |
 |---|---|
-| `short-video-strategy` | что снимать: тренды, хуки, идеи, сценарии, план съёмки |
-| `short-video-editing` | монтаж по этапам: черновик → материалы → вставки, зумы, звуки → музыка |
-| `reel-covers` | обложки с текстом, которые не обрезаются в сетке профиля |
-| `short-video-publishing` | подписи, расписание, публикация через Upload-Post, статистика |
+| `short-video-strategy` | what to film: trends, hooks, ideas, scripts, shot lists |
+| `short-video-editing` | editing in stages: rough cut → materials → b-roll, zooms, sounds → music |
+| `reel-covers` | covers with text that doesn't get cropped in the profile grid |
+| `short-video-publishing` | captions, scheduling, publishing via Upload-Post, analytics |
 
-Нужен Mac на чипе M1 или новее и Claude Code (приложение Claude, вкладка Code; подписка Pro или Max) или Codex (подписка ChatGPT Plus или выше).
+The skills are written in Russian, but the agent talks to you in your language and makes everything in it: subtitles, on-screen text, covers, captions, scripts.
 
-## Установка
+**Requirements:**
+- a Mac with an M1 chip or newer;
+- one of these agents:
+  - Claude Code (the Claude app, Code tab; Pro or Max plan);
+  - Codex (ChatGPT Plus or higher).
 
-### Способ 1: одной командой (если есть Node.js)
+## Installation
+
+### Option 1: one command (needs Node.js)
 
 ```bash
 npx skills add annapodobrazhnykh/reels-kit
 ```
 
-Выбери своих агентов (Claude Code, Codex и др.). Всё: дальше просто открой агента и попроси что-нибудь про рилсы, например «смонтируй рилс» или «что снимать на этой неделе?». При первом запуске агент сам заметит, что программ ещё нет, поставит ffmpeg, Whisper и остальное, спросит пару слов о твоём блоге и вернётся к твоей просьбе.
+Pick your agents (Claude Code, Codex, etc.). Then open the agent and ask for anything about reels, for example "edit my reel" or "what should I film this week?".
 
-### Способ 2: архивом
+On the first run, the agent sees the tools are missing and sets everything up itself: ffmpeg, Whisper and the rest. It asks a few questions about your blog, then goes back to what you asked for.
 
-Скачай [reels-kit.zip](https://github.com/annapodobrazhnykh/reels-kit/releases/latest/download/reels-kit.zip) в «Загрузки» (или возьми у того, кто поделился), открой Claude (вкладка Code) или Codex в папке «Загрузки» и напиши:
+### Option 2: zip archive
 
-> Установи набор для рилсов из загрузок reels-kit.zip — прочитай внутри README и проведи меня по настройке
+1. Download [reels-kit.zip](https://github.com/annapodobrazhnykh/reels-kit/releases/latest/download/reels-kit.zip) to your Downloads folder, or get it from whoever shared it with you.
+2. Open Claude (Code tab) or Codex in the Downloads folder.
+3. Type:
 
-От тебя понадобятся только пароль от Mac (если Homebrew ещё не стоит), пара слов о блоге и решение, подключать ли публикацию.
+> Install the reels kit from reels-kit.zip in Downloads. Read the README inside and walk me through the setup
 
-## Для агента
+The agent will need three things from you:
+- your Mac password, only if Homebrew isn't installed yet;
+- a few words about your blog;
+- whether to connect publishing.
 
-Тебя попросили установить или настроить этот набор. Открой `skills/short-video-editing/setup/УСТАНОВКА.md` и иди по нему шаг за шагом. Коротко:
+## For the agent
 
-- Архив ещё не распакован → `ditto -x -k ~/Downloads/reels-kit.zip ~/Downloads/` (из «Code → Download ZIP» на GitHub папка будет `reels-kit-main`).
-- **Claude Code** → `zsh setup.sh` в корне набора: программы + скиллы в `~/.claude/skills`.
-- **Codex** → `zsh setup.sh codex`: программы + скиллы в `~/.agents/skills`, коннекторы — через `~/.codex/config.toml`.
-- Скиллы уже стоят после `npx skills add` → ничего качать не нужно: `zsh <папка скиллов>/short-video-editing/setup/setup.sh` поставит только программы.
+You've been asked to install or set up this kit. Open `skills/short-video-editing/setup/УСТАНОВКА.md` and follow it step by step. It's in Russian. Talk to the user in their own language.
 
-Рабочая папка для роликов у всех агентов одна: `~/Desktop/shortVideos`.
+Summary:
 
-## Что внутри
+- **Archive not unpacked yet:** run `ditto -x -k ~/Downloads/reels-kit.zip ~/Downloads/`. If it came from GitHub's "Code → Download ZIP", the folder is `reels-kit-main`.
+- **Claude Code:** run `zsh setup.sh` in the kit root. It installs the tools and copies the skills to `~/.claude/skills`.
+- **Codex:** run `zsh setup.sh codex`. It installs the tools and copies the skills to `~/.agents/skills`. Connectors go through `~/.codex/config.toml`.
+- **Skills already installed via `npx skills add`:** nothing to download. Run `zsh <skills folder>/short-video-editing/setup/setup.sh` to install just the tools.
 
-- `skills/` — 4 скилла. В `short-video-editing/setup/` — всё для настройки: `setup.sh` (ставит ffmpeg-full, whisper.cpp, yt-dlp, gh, Python-окружение и модель Whisper 1,6 ГБ, создаёт рабочую папку; повторный запуск безопасен), `УСТАНОВКА.md` (пошаговая инструкция для агента), `brand.md` (стиль субтитров), `AGENTS.md` (памятка для Codex в рабочей папке).
-- `setup.sh` в корне — короткая обёртка для установки из архива.
+Every agent uses the same working folder for videos: `~/Desktop/shortVideos`.
 
-Звуки и музыка синтезируются кодом, сэмплов нет. Шрифт Tektur — SIL Open Font License (`reel-covers/assets/OFL.txt`).
+## What's inside
 
-Методика стратегии и публикации — пересборка открытых промптов Нади Зуевой ([nestyme/awesome-prompts](https://github.com/nestyme/awesome-prompts)); подробности — в самих скиллах.
+**`skills/`:** the 4 skills. Everything for setup is in `short-video-editing/setup/`:
+- `setup.sh` installs ffmpeg-full, whisper.cpp, yt-dlp, gh, a Python environment and the 1.6 GB Whisper model, and creates the working folder. It's safe to run again.
+- `УСТАНОВКА.md` is the step-by-step guide for the agent.
+- `brand.md` is the subtitle style.
+- `AGENTS.md` holds the rules for the working folder. It's copied there as both `AGENTS.md` and `CLAUDE.md`.
+
+**`setup.sh`** in the root: a short wrapper for installing from the zip.
+
+Sounds and music are generated by code, with no samples. The Tektur font is under the SIL Open Font License (`reel-covers/assets/OFL.txt`).
+
+The strategy and publishing methods are a reworking of Nadia Zueva's open prompts ([nestyme/awesome-prompts](https://github.com/nestyme/awesome-prompts)). Details are in the skills themselves.

@@ -26,55 +26,55 @@ case "$AGENT" in
   claude) SKILLS="$HOME/.claude/skills" ;;
   codex)  SKILLS="$HOME/.agents/skills" ;;
   tools)  SKILLS="" ;;
-  *) echo "Неизвестный режим «$AGENT». Используй: zsh setup.sh  |  zsh setup.sh codex  |  zsh setup.sh tools"; exit 1 ;;
+  *) echo "Unknown mode \"$AGENT\". Use: zsh setup.sh  |  zsh setup.sh codex  |  zsh setup.sh tools"; exit 1 ;;
 esac
 
 if [[ "$(uname -m)" != "arm64" ]]; then
-  echo "Нужен Mac на Apple Silicon (M1/M2/M3/M4): скиллы рассчитаны на /opt/homebrew."; exit 1
+  echo "This kit needs an Apple Silicon Mac (M1 or newer): the skills expect /opt/homebrew."; exit 1
 fi
 
 if [[ ! -x /opt/homebrew/bin/brew ]]; then
-  echo "→ Ставлю Homebrew (попросит пароль от Mac)"
+  echo "→ Installing Homebrew (it will ask for your Mac password)"
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 eval "$(/opt/homebrew/bin/brew shellenv)"
 grep -q 'brew shellenv' ~/.zprofile 2>/dev/null || echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 
-echo "→ Программы: ffmpeg-full, whisper.cpp, yt-dlp, gh, python"
+echo "→ Tools: ffmpeg-full, whisper.cpp, yt-dlp, gh, python"
 PKGS=(ffmpeg-full whisper-cpp yt-dlp python@3.12)
 command -v gh >/dev/null || PKGS+=(gh)   # gh мог стоять не через brew — не дублируем
 brew install $PKGS
 
-echo "→ Папка проекта $ROOT"
+echo "→ Working folder $ROOT"
 mkdir -p "$ROOT"/{videos,_published,_covers,_system/tools,_system/sfx,_strategy/{creators,trends,ideas}}
 cp -n "$EDIT"/assets/*.wav "$ROOT/_system/sfx/" 2>/dev/null || true
 [[ -f "$ROOT/_system/brand.md" ]] || cp "$SETUP/brand.md" "$ROOT/_system/brand.md"
-[[ -f "$ROOT/_system/broll-library.md" ]] || printf '# Библиотека вставок\n\n| файл | что на нём | где использовано |\n|---|---|---|\n' > "$ROOT/_system/broll-library.md"
+[[ -f "$ROOT/_system/broll-library.md" ]] || printf '# B-roll library\n\n| file | what it shows | used in |\n|---|---|---|\n' > "$ROOT/_system/broll-library.md"
 [[ -f "$ROOT/AGENTS.md" ]] || cp "$SETUP/AGENTS.md" "$ROOT/AGENTS.md"
 [[ -f "$ROOT/CLAUDE.md" ]] || cp "$SETUP/AGENTS.md" "$ROOT/CLAUDE.md"   # то же для Claude Code
 
 MODEL="$ROOT/_system/tools/ggml-large-v3-turbo.bin"
 if [[ ! -s "$MODEL" ]]; then
-  echo "→ Качаю модель Whisper (~1,6 ГБ, несколько минут)"
+  echo "→ Downloading the Whisper model (~1.6 GB, a few minutes)"
   curl -L --fail -o "$MODEL.part" https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin
   mv "$MODEL.part" "$MODEL"
 fi
 
 VENV="$ROOT/_system/tools/venv"
 if [[ ! -x "$VENV/bin/python" ]]; then
-  echo "→ Python-окружение"
+  echo "→ Python environment"
   "$(brew --prefix python@3.12)/bin/python3.12" -m venv "$VENV"
 fi
 "$VENV/bin/python" -m pip install -q --upgrade pip
 "$VENV/bin/python" -m pip install -q numpy scipy opencv-python Pillow pymupdf
 
 if [[ -n "$SKILLS" ]]; then
-  echo "→ Скиллы в $SKILLS"
+  echo "→ Skills to $SKILLS"
   mkdir -p "$SKILLS"
   for name in $KIT_SKILLS; do
     s="$SRC/$name"
     if [[ -d "$SKILLS/$name" ]]; then
-      echo "   $name уже есть — пропускаю (удали папку, если хочешь поставить заново)"
+      echo "   $name already there, skipping (delete the folder to reinstall)"
     else
       cp -R "$s" "$SKILLS/"
       echo "   $name ✓"
@@ -83,10 +83,10 @@ if [[ -n "$SKILLS" ]]; then
 fi
 
 echo
-echo "Проверка:"
-/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg -hide_banner -filters 2>/dev/null | grep -q ' subtitles ' && echo "  ffmpeg с субтитрами ✓"
+echo "Check:"
+/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg -hide_banner -filters 2>/dev/null | grep -q ' subtitles ' && echo "  ffmpeg with subtitles ✓"
 [[ -x /opt/homebrew/bin/whisper-cli ]] && echo "  whisper-cli ✓"
-[[ -s "$MODEL" ]] && echo "  модель Whisper ✓"
-"$VENV/bin/python" -c "import numpy, scipy, cv2, PIL, fitz" && echo "  python-библиотеки ✓"
+[[ -s "$MODEL" ]] && echo "  Whisper model ✓"
+"$VENV/bin/python" -c "import numpy, scipy, cv2, PIL, fitz" && echo "  Python libraries ✓"
 echo
-echo "Готово. Вернись к агенту (Claude / Codex) и напиши «готово»."
+echo "Done. Go back to your agent (Claude / Codex) and type \"done\"."

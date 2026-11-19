@@ -17,6 +17,7 @@ S = os.getcwd()
 FF = "/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg"
 WH = "/opt/homebrew/bin/whisper-cli"
 MODEL = os.path.expanduser("~/Desktop/shortVideos/_system/tools/ggml-large-v3-turbo.bin")
+LANG = os.environ.get("REEL_LANG", "ru")  # language of the reel: ru, en, de...
 CTX = 2.5
 SHIFTS = (-0.12, -0.06, 0, 0.06, 0.12)
 tmp = tempfile.mkdtemp()
@@ -25,7 +26,7 @@ def text(filter_graph):
     out = f"{tmp}/p.wav"
     subprocess.run([FF, "-v", "error", "-y", "-i", f"{S}/audio.wav", "-filter_complex", filter_graph,
                     out], check=True)
-    r = subprocess.run([WH, "-m", MODEL, "-l", "ru", "-f", out, "-nt"], capture_output=True, text=True)
+    r = subprocess.run([WH, "-m", MODEL, "-l", LANG, "-f", out, "-nt"], capture_output=True, text=True)
     return " ".join(r.stdout.split())
 
 def piece(a, b):
