@@ -15,7 +15,7 @@ SRC="${EDIT:h}"            # папка со всеми скиллами наб�
 KIT_SKILLS=(short-video-strategy short-video-editing reel-covers short-video-publishing)
 if [[ -n "$1" ]]; then
   AGENT="$1"
-elif [[ "$SRC" == "$HOME/.claude/skills" || "$SRC" == "$HOME/.agents/skills" || "${SRC:A}" == "${HOME:A}/.agents/skills" ]]; then
+elif [[ "$SRC" == */.claude/skills || "$SRC" == */.agents/skills ]]; then   # уже стоят у агента (глобально или в проекте)
   AGENT=tools
 else
   AGENT=claude
@@ -41,7 +41,9 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 grep -q 'brew shellenv' ~/.zprofile 2>/dev/null || echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 
 echo "→ Программы: ffmpeg-full, whisper.cpp, yt-dlp, gh, python"
-brew install ffmpeg-full whisper-cpp yt-dlp gh python@3.12
+PKGS=(ffmpeg-full whisper-cpp yt-dlp python@3.12)
+command -v gh >/dev/null || PKGS+=(gh)   # gh мог стоять не через brew — не дублируем
+brew install $PKGS
 
 echo "→ Папка проекта $ROOT"
 mkdir -p "$ROOT"/{videos,_published,_covers,_system/tools,_system/sfx,_strategy/{creators,trends,ideas}}
@@ -49,6 +51,7 @@ cp -n "$EDIT"/assets/*.wav "$ROOT/_system/sfx/" 2>/dev/null || true
 [[ -f "$ROOT/_system/brand.md" ]] || cp "$SETUP/brand.md" "$ROOT/_system/brand.md"
 [[ -f "$ROOT/_system/broll-library.md" ]] || printf '# Библиотека вставок\n\n| файл | что на нём | где использовано |\n|---|---|---|\n' > "$ROOT/_system/broll-library.md"
 [[ -f "$ROOT/AGENTS.md" ]] || cp "$SETUP/AGENTS.md" "$ROOT/AGENTS.md"
+[[ -f "$ROOT/CLAUDE.md" ]] || cp "$SETUP/AGENTS.md" "$ROOT/CLAUDE.md"   # то же для Claude Code
 
 MODEL="$ROOT/_system/tools/ggml-large-v3-turbo.bin"
 if [[ ! -s "$MODEL" ]]; then
