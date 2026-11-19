@@ -9,7 +9,7 @@ A set of skills for an AI agent. With them, the agent edits talking-head reels f
 | `reel-covers` | covers with text that doesn't get cropped in the profile grid |
 | `short-video-publishing` | captions, scheduling, publishing via Upload-Post, analytics |
 
-The skills are written in Russian, but the agent talks to you in your language and makes everything in it: subtitles, on-screen text, covers, captions, scripts.
+The skills are written in Russian, but the agent talks to you in your language. Subtitles, on-screen text, covers and captions are made in the language the video is recorded in.
 
 **Requirements:**
 - a Mac with an M1 chip or newer;
