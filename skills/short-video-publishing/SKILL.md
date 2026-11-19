@@ -7,6 +7,8 @@ description: "Публикация и аналитика коротких вид
 
 `<скиллы>` в командах ниже — папка, где лежат этот и соседние скиллы (у Claude Code обычно `~/.claude/skills`, у Codex — `~/.agents/skills`).
 
+**Первый запуск.** Перед любой работой по этому скиллу проверь, что набор настроен: есть `/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg`, `/opt/homebrew/bin/whisper-cli`, `~/Desktop/shortVideos/_system/tools/ggml-large-v3-turbo.bin` и `~/Desktop/shortVideos/_strategy/brief.md`. Если хоть чего-то нет — набор только что поставили (например, через `npx skills add`): скажи человеку одной фразой, что сначала нужно один раз всё настроить, пройди `<скиллы>/short-video-editing/setup/УСТАНОВКА.md` и потом вернись к его просьбе.
+
 Это шаги 6–7 общего порядка работы с Аней (черновик → материалы → версия с украшениями → фоновая музыка → обложка → **пост → отложка**), полный порядок — в скилле `short-video-editing`.
 
 Пересборка второй половины `ugc-hooks` (посткит, анти-спам) и `tiktok-shadowban-check` Нади Зуевой (github.com/nestyme/awesome-prompts). Postiz заменён на **Upload-Post** (подключён к агенту как коннектор / MCP-сервер), OpenRouter — на сам агент, TikTok-специфика адаптирована к Instagram, YouTube и X. Методика её, код наш.
